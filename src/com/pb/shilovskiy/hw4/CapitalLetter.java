@@ -4,9 +4,6 @@ import java.util.Scanner;
 
 public class CapitalLetter {
 
-    static public String procUpLetter(String str){
-        return str;
-    }
 
     static String procUpperFirst(String strIn){
         char symbol;
