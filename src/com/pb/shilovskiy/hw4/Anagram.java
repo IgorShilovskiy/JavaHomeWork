@@ -21,12 +21,10 @@ public class Anagram {
         char [] charStr = strIn.toCharArray();
         Arrays.sort(charStr);
         for (char value : charStr) {
-            strOut=strOut + Character.toString(value);
+            strOut=strOut.concat(Character.toString(value));
         }
         return strOut;
     }
-
-
 
 
     public static void main(String[] args) {
