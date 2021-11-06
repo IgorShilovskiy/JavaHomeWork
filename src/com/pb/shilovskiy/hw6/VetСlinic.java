@@ -1,5 +1,7 @@
 package com.pb.shilovskiy.hw6;
 
+import java.lang.reflect.Constructor;
+
 public class VetСlinic {
 
     public static void toSleep(Animal animal){
@@ -23,7 +25,14 @@ public class VetСlinic {
         animal.sleep();
     }
 
-    public static void main(String[] args) {
+    public static void listAnimals(Animal[] animals){
+        System.out.println("В клинике обслуживаются следующие пациенты:");
+        for (int i=0; i<animals.length; i++){
+            System.out.println(i+1+ ". " + animals[i].toString());
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
         Cat cat1 = new Cat ("Whiskas","домашнее", false);
         Cat cat2 = new Cat ("Полевая мышь","дикое", true);
         Cat cat3 = new Cat ("Sheba","домашнее", false);
@@ -33,32 +42,28 @@ public class VetСlinic {
         Horse horse1 = new Horse ("Трава", "дикое", "не используется человеком");
         Horse horse2 = new Horse ("Яблоки", "домашнее", "для красоты");
         Horse horse3 = new Horse ("Овес", "дикое", "для скачек");
-        Animal animal = new Animal("Зерно ","дикое");
 
-        Animal[] animals = new Animal[] {cat1, cat2, cat3, dog1, dog2, dog3, horse1, horse2, horse3, animal};
+        Animal[] animals = new Animal[] {cat1, cat2, cat3, dog1, dog2, dog3, horse1, horse2, horse3};
+
+        listAnimals(animals);
+
+        Class vetClazz = Class.forName("com.pb.shilovskiy.hw6.Veterinarian");
 
 
-        cat1.eat();
-        cat1.makeNoise();
-
-        dog1.eat();
-        dog1.makeNoise();
-
-        horse1.eat();
-        horse1.makeNoise();
-
-        toSleep(cat1);
-        toSleep(dog1);
-        toSleep(horse1);
-        toSleep(animal);
-
-        Veterinarian veterinarian = new Veterinarian();
-        veterinarian.treatAnimal(horse1);
-
-        System.out.println(cat1.toString());
-        System.out.println(dog1.toString());
-        System.out.println(horse1.toString());
-        System.out.println(animal.toString());
+        // создание объекта через рефлексию
+        Constructor constr = vetClazz.getConstructor(new Class[] {String.class});
+        Object obj = constr.newInstance("профессор медицины Крузенштерн И.Ф.");
+        if (obj instanceof Veterinarian) {
+            ((Veterinarian) obj).printName();
+            for (int i=0; i<animals.length; i++){
+                System.out.print(i+1 + ". ");
+                ((Veterinarian) obj).treatAnimal(animals[i]);
+                toSleep(animals[i]);
+                System.out.println("Доктор проводит операцию........... Операция прошла успешно");
+                animals[i].makeNoise();
+                animals[i].eat();
+            }
+        }
 
     }
 }
