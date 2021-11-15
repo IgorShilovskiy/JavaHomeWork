@@ -1,47 +1,27 @@
 package com.pb.shilovskiy.hw7;
 
 public enum Size {
-    XXS,
-    XS,
-    S,
-    M,
-    L;
+    XXS("Детский размер",32),
+    XS("Взрослый размер",34),
+    S("Взрослый размер",36),
+    M("Взрослый размер",38),
+    L("Взрослый размер",40);
     private String description;
     private int euroSize;
 
-    public String getDescription(){
-        String st="Взрослый размер";
-        if (this.equals(XXS)){
-            st = "Детский размер";
-        }
-        return st;
+
+    public String getDescription() {
+        return description;
     }
 
-    public int getEuroSize(){
-        int i=0;
-        switch (this) {
-            case XXS:
-                i=32;
-                break;
-            case XS:
-                i=34;
-                break;
-            case S:
-                i=36;
-                break;
-            case M:
-                i=38;
-                break;
-            case L:
-                i=40;
-                break;
-        }
-        return i;
-        }
-//    private Size(String description, int euroSize) {
-//        this.description = description;
-//        this.euroSize = euroSize;
-//    }
+    public int getEuroSize() {
+        return euroSize;
+    }
+
+    Size(String description, int euroSize) {
+        this.description = description;
+        this.euroSize = euroSize;
+    }
 
 }
 
