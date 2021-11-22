@@ -7,6 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 public class FileNumbers {
 
@@ -14,13 +18,13 @@ public class FileNumbers {
         Path path = Paths.get("out\\production\\JawaHomeWork\\com\\pb\\shilovskiy\\hw9\\numbers.txt");
         try {
             Path testFile1 = Files.createFile(path);
-            System.out.println("Файл \"" + path.toAbsolutePath() + "\" успешно создан");
+            LOGGER.log(Level.INFO, "Файл \"" + path.toAbsolutePath() + "\" успешно создан");
         }
         catch (FileAlreadyExistsException e){
-            System.out.println("Файл \"" + path.toAbsolutePath() + "\" уже существует. Будет произведена его очистка");
+            LOGGER.log(Level.WARNING, "Файл \"" + path.toAbsolutePath() + "\" уже существует. Будет произведена его очистка ", e);
         }
         catch (Exception e){
-            System.out.println("Файл не создан. Ошибка: " + e);
+            LOGGER.log(Level.WARNING, "Файл не создан. Ошибка: ", e);
         }
 
         Random random = new Random();
@@ -33,11 +37,11 @@ public class FileNumbers {
                 writer.newLine();
             }
         writer.close();
-        System.out.println("Запись в файл произведена!");
+            LOGGER.log(Level.INFO, "Запись в файл произведена!");
         }
 
         catch (Exception e) {
-            System.out.println("Ошибка записи в файл: " + e);
+            LOGGER.log(Level.WARNING, "Ошибка записи в файл: ", e);
         }
 
     }
@@ -48,27 +52,31 @@ public class FileNumbers {
         Path path = Paths.get("out\\production\\JawaHomeWork\\com\\pb\\shilovskiy\\hw9\\odd-numbers.txt");
         try {
             Path testFile1 = Files.createFile(path);
-            System.out.println("Файл \"" + path.toAbsolutePath() + "\" успешно создан");
+            LOGGER.log(Level.INFO, "Файл \"" + path.toAbsolutePath() + "\" успешно создан");
         } catch (FileAlreadyExistsException e) {
-            System.out.println("Файл \"" + path.toAbsolutePath() + "\" уже существует. Будет произведена его очистка");
+            LOGGER.log(Level.WARNING, "Файл \"" + path.toAbsolutePath() + "\" уже существует. Будет произведена его очистка ", e);
         } catch (Exception e) {
-            System.out.println("Файл не создан. Ошибка: " + e);
+            LOGGER.log(Level.WARNING, "Файл не создан. Ошибка: ", e);
         }
         try (BufferedReader reader = Files.newBufferedReader(path1)) {
             String line;
             int value;
             BufferedWriter writer = Files.newBufferedWriter(path);
+            System.out.println("Содержимое файла \"" + path1.toAbsolutePath() + "\": ");
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
                 String[] strOut=line.split(" ");
                 for (int i=0; i<strOut.length; i++){
 
-//                    Добавить трай если не получается в инт
-
-                            value = Integer.parseInt(strOut[i]);
-                    if (value%2==0){
-                        writer.write(0+" ");
+                    try{
+                        value = Integer.parseInt(strOut[i]);}
+                    catch (Exception e1){
+                        LOGGER.log(Level.WARNING, "Символ " + strOut[i] + " заменен на 0");
+                        value=0;}
+                        if (value%2==0){
+                            writer.write(0+" ");
                     }
+
                     else{
                         writer.write(strOut[i]+" ");
                     }
@@ -76,9 +84,9 @@ public class FileNumbers {
                 writer.newLine();
             }
             writer.close();
-            System.out.println("Запись в файл произведена!");
+            LOGGER.log(Level.INFO, "Запись в файл произведена!");
         } catch (Exception e) {
-            System.out.println("Ошибка чтения файла: " + e);
+            LOGGER.log(Level.WARNING, "Ошибка чтения файла: ", e);
 
         }
     }
@@ -86,6 +94,7 @@ public class FileNumbers {
 
     public static void main(String[] args) {
 
+        Logger LOGGER = Logger.getLogger(FileNumbers.class.getName());
 
         createNumbersFile();
         createOddNumbersFile();
