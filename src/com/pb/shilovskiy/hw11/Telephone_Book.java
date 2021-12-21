@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.pb.shilovskiy.hw9.FileNumbers;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -318,7 +317,7 @@ public class Telephone_Book {
         String json = mapper.writeValueAsString(persons);
 
 
-        Logger LOGGER = Logger.getLogger(FileNumbers.class.getName());
+        Logger LOGGER = Logger.getLogger(Telephone_Book.class.getName());
         Path path = Paths.get("out\\production\\JawaHomeWork\\com\\pb\\shilovskiy\\hw11\\TelephoneBook.txt");
         try {
             Path testFile1 = Files.createFile(path);
@@ -354,7 +353,7 @@ public class Telephone_Book {
         mapper.registerModule(module1);
 
 
-        Logger LOGGER = Logger.getLogger(FileNumbers.class.getName());
+        Logger LOGGER = Logger.getLogger(Telephone_Book.class.getName());
         Path path = Paths.get("out\\production\\JawaHomeWork\\com\\pb\\shilovskiy\\hw11\\TelephoneBook.txt");
         String json="";
         try (BufferedReader reader = Files.newBufferedReader(path)) {
