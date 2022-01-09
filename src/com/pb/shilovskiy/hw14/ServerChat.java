@@ -16,40 +16,53 @@ public class ServerChat {
 
     static class Handler implements Runnable {
         private final Socket socket;
+        // поток для чтения данных
+        private BufferedReader in;
+        // поток для отправки данных
+        private PrintWriter out;
+
 
         public Handler(Socket socket) {
             this.socket = socket;
+        }
+
+        // отправка сообщений всем клиентам, кроме себя
+        public void sendMessageToAll(String message){
+            for (Handler client : clients) {
+                if (!client.equals(this)){
+                    client.out.println(message);
+                }
+            }
         }
 
         @Override
         public void run() {
             try {
                 System.out.println("Клиент " + (clients.indexOf(this)+1) + " подключился к чату");
-                // поток для чтения данных
-                BufferedReader in = null;
-                // поток для отправки данных
-                PrintWriter out = null;
-
 
                 // создаем потоки для связи с клиентом
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
+                sendMessageToAll("Клиент " + (clients.indexOf(this)+1) + " подключился к чату");
+                out.println("Ваш ник: Клиент " + (clients.indexOf(this)+1));
+                out.println("Введите сообщение: ");
                 String clientMessage;
                 String serverMessage;
 
                 // цикл ожидания сообщений от клиента
-//                System.out.println("Ожидаем сообщений");
                 while ((clientMessage = in.readLine()) != null) {
                     if ("\\exit".equalsIgnoreCase(clientMessage)) {
+                        out.println(clientMessage);
                         break;
                     }
                     serverMessage = "Клиент " + (clients.indexOf(this)+1) + ": " + clientMessage;
-                    out.println(serverMessage);
+                    sendMessageToAll(serverMessage);
                     System.out.println(serverMessage);
                 }
 
                 System.out.println("Клиент " + (clients.indexOf(this)+1) + " покинул чат");
-                clients.remove(this);
+                sendMessageToAll("Клиент " + (clients.indexOf(this)+1) + " покинул чат");
+//                clients.remove(this);
                 out.close();
                 in.close();
             } catch (Exception ex) {

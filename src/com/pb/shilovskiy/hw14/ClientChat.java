@@ -8,6 +8,37 @@ import java.net.Socket;
 
 public class ClientChat {
 
+    public static class Written implements Runnable {
+        BufferedReader inConsole;
+        PrintWriter outServer;
+        String clientMessage;
+
+        public Written(BufferedReader inConsole, PrintWriter outServer) {
+            this.inConsole = inConsole;
+            this.outServer = outServer;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while ((clientMessage = inConsole.readLine()) != null) {
+                    if ("\\exit".equalsIgnoreCase(clientMessage)) {
+                        System.out.println("Вы покинули чат");
+                        outServer.println(clientMessage);
+                        break;
+                    }
+                    outServer.println(clientMessage);
+                }
+            }
+            catch (Exception e){
+                System.out.println("Сервер недоступен");
+            }
+
+        }
+    }
+
+
+
     public static void main(String[] args) throws Exception {
         String serverIp = "127.0.0.1";
         int serverPort = 5555;
@@ -15,8 +46,7 @@ public class ClientChat {
         System.out.println("Соединяемся с сервером чата " + serverIp + ":" + serverPort);
         try {
             server = new Socket(serverIp, serverPort);
-        }
-        catch (ConnectException e){
+        } catch (ConnectException e) {
             System.out.println("Не могу установить соединение");
             System.exit(-1);
         }
@@ -26,21 +56,20 @@ public class ClientChat {
         PrintWriter outServer = new PrintWriter(server.getOutputStream(), true);
         BufferedReader inConsole = new BufferedReader(new InputStreamReader(System.in));
 
-        String clientMessage, serverMessage;
-        System.out.println("Введите сообщение: ");
+        Written written = new Written(inConsole, outServer);
+        Thread threadWritten = new Thread(written);
+        threadWritten.start();
 
-        // Основной цикл отправки сообщений серверу
-        while ((clientMessage = inConsole.readLine()) != null) {
-            if ("\\exit".equalsIgnoreCase(clientMessage)) {
-                System.out.println("Вы покинули чат");
-                break;
+        String serverMessage;
+        while (true)
+            if ((serverMessage = inServer.readLine()) != null) {
+                if ("\\exit".equalsIgnoreCase(serverMessage))
+                    break;
+                else {
+                    System.out.println(serverMessage);
+                }
             }
-            outServer.println(clientMessage);
-            serverMessage = inServer.readLine();
-            System.out.println(serverMessage);
-            System.out.println("Введите сообщение: ");
-        }
-        outServer.close();
+
         inServer.close();
         outServer.close();
         server.close();
