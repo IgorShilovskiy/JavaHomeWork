@@ -38,12 +38,12 @@ public class ServerChat {
         @Override
         public void run() {
             try {
-                System.out.println("Клиент " + (clients.indexOf(this)+1) + " подключился к чату");
+                System.out.println(java.time.LocalDateTime.now()+ ":  " + "Клиент " + (clients.indexOf(this)+1) + " подключился к чату");
 
                 // создаем потоки для связи с клиентом
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
-                sendMessageToAll("Клиент " + (clients.indexOf(this)+1) + " подключился к чату");
+                sendMessageToAll(java.time.LocalDateTime.now()+ ":  " + "Клиент " + (clients.indexOf(this)+1) + " подключился к чату");
                 out.println("Ваш ник: Клиент " + (clients.indexOf(this)+1));
                 out.println("Введите сообщение: ");
                 String clientMessage;
@@ -55,13 +55,14 @@ public class ServerChat {
                         out.println(clientMessage);
                         break;
                     }
-                    serverMessage = "Клиент " + (clients.indexOf(this)+1) + ": " + clientMessage;
+                    serverMessage = java.time.LocalDateTime.now()+ ":  " + "Клиент " + (clients.indexOf(this)+1) + ": " + clientMessage;
                     sendMessageToAll(serverMessage);
+                    out.println(java.time.LocalDateTime.now()+ ":  " + "доставлено");
                     System.out.println(serverMessage);
                 }
 
-                System.out.println("Клиент " + (clients.indexOf(this)+1) + " покинул чат");
-                sendMessageToAll("Клиент " + (clients.indexOf(this)+1) + " покинул чат");
+                System.out.println(java.time.LocalDateTime.now()+ ":  " + "Клиент " + (clients.indexOf(this)+1) + " покинул чат");
+                sendMessageToAll(java.time.LocalDateTime.now()+ ":  " + "Клиент " + (clients.indexOf(this)+1) + " покинул чат");
 //                clients.remove(this);
                 out.close();
                 in.close();
